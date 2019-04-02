@@ -11,9 +11,9 @@ int TM1620_Init(void)
 
     TM1620_LowLevel_Init();
 
-    TM1620_Init_Test();
+    // TM1620_Init_Test();
 
-    vTaskDelay(500);
+    vTaskDelay(500 / portTICK_RATE_MS);
 
     return 0;
 }
@@ -51,7 +51,7 @@ int TM1620_LowLevel_Init(void)
     DIO_HIGH;
     STB_HIGH;
     CLK_HIGH;
-    vTaskDelay(10);
+    vTaskDelay(10 / portTICK_RATE_MS);
 
     return 0;
 }
@@ -65,33 +65,33 @@ void TM1620_Write(TM1620_CMD cmd, uint8_t data)
         //显示模式6位8段,0b0000_0010
         TM1620_Write_8bit(data & 0x03);
         STB_HIGH;
-        //vTaskDelay(1);
+        //vTaskDelay(1/ portTICK_RATE_MS);
         break;
     case TM1620_DATA:
         STB_LOW;
         //数据读写模式0b0100_0000
         TM1620_Write_8bit(0x40 | (data & 0x7));
         STB_HIGH;
-        //vTaskDelay(1);
+        //vTaskDelay(1/ portTICK_RATE_MS);
         break;
     case TM1620_BRIGHT:
         STB_LOW;
         //亮度设置0b1000_1xxx
         TM1620_Write_8bit(0x88 | (0x7 & data));
         STB_HIGH;
-        //vTaskDelay(1);
+        //vTaskDelay(1/ portTICK_RATE_MS);
         break;
     case TM1620_ADDR: //显示地址
         STB_LOW;
         TM1620_Write_8bit(0xC0 | (0xF & data));
-        //vTaskDelay(1);
+        //vTaskDelay(1/ portTICK_RATE_MS);
         break;
     }
 }
 
 int TM1620_Write_8bit(uint8_t data)
 {
-    //vTaskDelay(1);
+    //vTaskDelay(1/ portTICK_RATE_MS);
     for (int i = 0; i < 8; i++)
     {
         CLK_LOW;
@@ -104,9 +104,9 @@ int TM1620_Write_8bit(uint8_t data)
             DIO_LOW;
         }
         data = data >> 1;
-        vTaskDelay(1);
+        vTaskDelay(1/ portTICK_RATE_MS);
         CLK_HIGH;
-        //vTaskDelay(1);
+        //vTaskDelay(1/ portTICK_RATE_MS);
     }
     return 0;
 }
@@ -151,7 +151,7 @@ void TM1620_Init_Test(void)
         DisplayArray[i] = 'T';
     }
     TM1620_Print(DisplayArray);
-    vTaskDelay(1000);
+    vTaskDelay(1000 / portTICK_RATE_MS);
     u16ToDisplayArray(1);
     TM1620_Print(DisplayArray);
 }
